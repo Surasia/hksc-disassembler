@@ -1,0 +1,77 @@
+[project]
+name = "hksc_disassembler"
+version = "0.1.0"
+description = "A HavokScript 5.1 Disassembler"
+authors = [{ name = "Surasia" }]
+license = { file = "LICENSE" }
+dependencies = ["click~=8.1.7"]
+readme = "README.md"
+requires-python = ">= 3.11.0"
+classifiers = [
+    "Typing :: Typed",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: Microsoft :: Windows",
+    "Intended Audience :: Developers",
+    "Development Status :: 3 - Alpha",
+]
+keywords = [
+    "HavokScript",
+    "hksc",
+    "lua",
+    "lua script",
+    "scripting",
+    "disassembler",
+]
+
+[project.urls]
+Repository = "https://github.com/Surasia/hksc-disassembler"
+Issues = "https://github.com/Surasia/hksc-disassembler/issues"
+Changelog = "https://github.com/Surasia/hksc-disassembler/blob/main/CHANGELOG.md"
+
+[project.scripts]
+hksc_disassembler = "hksc_disassembler.cli.disassembler:cli"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.rye]
+managed = true
+dev-dependencies = ["pyright", "mypy", "pytest", "ruff"]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.rye.scripts]
+format = { chain = ["format:ruff", "fix:ruff"] }
+"format:ruff" = "ruff format"
+"lint" = { chain = ["check:ruff", "typecheck"] }
+"check:ruff" = "ruff check ."
+"fix:ruff" = "ruff check --fix ."
+typecheck = { chain = ["typecheck:pyright", "typecheck:mypy"] }
+"typecheck:pyright" = "pyright"
+"typecheck:mypy" = "mypy ."
+
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.12"
+reportImplicitOverride = true
+
+[tool.ruff]
+line-length = 140
+output-format = "grouped"
+target-version = "py312"
+
+[lint]
+ignore-init-module-imports = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+length-sort = true
+length-sort-straight = true
+combine-as-imports = true
+extra-standard-library = ["typing_extensions"]

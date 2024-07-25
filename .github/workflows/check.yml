@@ -1,0 +1,26 @@
+name: check/lint
+
+on: ["push"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      
+      - name: Install Rye
+        uses: eifinger/setup-rye@v4.0.2
+        with: 
+          version: 'latest'
+          enable-cache: true
+          cache-prefix: 'hksc_disassembler'
+      
+      - name: Run Rye
+        run: |
+         rye sync --all-features
+         rye run lint
