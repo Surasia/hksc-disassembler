@@ -1,3 +1,4 @@
+from typing import List
 import click
 
 from ..loader.hs import HavokScriptFile
@@ -12,12 +13,17 @@ from ..loader.hs_structure import HSStructBlock
 def cli() -> None:
     pass
 
-
-def print_instruction(instruction: HSInstruction) -> None:
+# kinda messy, will refactor soon
+def print_instruction(instruction: HSInstruction, constants: List[HSConstant]) -> None:
     click.secho(f"     - {instruction.opCode.name}", fg="yellow", nl=False)
     for arg in instruction.args:
         click.secho(f" {arg.mode.name}", fg="bright_cyan", nl=False)
-        click.secho(f"({arg.value})", fg="bright_blue", nl=False)
+        if arg.mode == 2:
+            click.secho(f"({arg.value}) // {constants[arg.value].value}", fg="bright_blue", nl=False)
+        elif instruction.opCode == 25 and arg.mode == 0:
+            click.secho(f"({arg.value}) // {constants[arg.value].value}", fg="bright_blue", nl=False)
+        else:
+            click.secho(f"({arg.value})", fg="bright_blue", nl=False)
     click.echo()
 
 
@@ -116,7 +122,7 @@ def print_functions(function: HSFunction) -> None:
     click.secho("   Instructions:", fg="bright_blue")
 
     for instruction in function.instructions:
-        print_instruction(instruction)
+        print_instruction(instruction, function.constants)
 
     click.secho("   Constants:", fg="bright_blue")
 
