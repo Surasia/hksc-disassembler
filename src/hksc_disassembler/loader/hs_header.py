@@ -43,7 +43,7 @@ class HSHeader:
 
     def read(self, f: BytesIO) -> None:
         self.magic = read_integer(f, False, 4)
-        if self.magic != 1635077147:  # type: ignore
+        if self.magic != 457995617:
             raise HSHeaderException("Header magic data does not match!")
 
         self.version = read_integer(f, False, 1, self.byteorder)
