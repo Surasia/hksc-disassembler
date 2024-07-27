@@ -22,7 +22,7 @@ def read_t_string(f: BytesIO, header: HSHeader) -> str:
 
 def read_t_number(f: BytesIO, header: HSHeader) -> int | float:
     value: int | float = 0
-    if header.numberType == 0:
+    if header.numberType == 1:
         value = read_integer(f, True, header.intSize, header.byteorder)
     else:
         if header.intSize == 8:

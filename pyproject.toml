@@ -1,6 +1,6 @@
 [project]
 name = "hksc_disassembler"
-version = "0.1.1"
+version = "0.1.2"
 description = "A HavokScript 5.1 Disassembler"
 authors = [{ name = "Surasia" }]
 license = { file = "LICENSE" }
