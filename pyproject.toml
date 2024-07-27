@@ -28,7 +28,7 @@ keywords = [
 [project.urls]
 Repository = "https://github.com/Surasia/hksc-disassembler"
 Issues = "https://github.com/Surasia/hksc-disassembler/issues"
-Changelog = "https://github.com/Surasia/hksc-disassembler/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/Surasia/hksc-disassembler/blob/master/CHANGELOG.md"
 
 [project.scripts]
 hksc_disassembler = "hksc_disassembler.cli.disassembler:cli"
