@@ -1,4 +1,3 @@
-from typing import List
 import click
 
 from ..loader.hs import HavokScriptFile
@@ -14,7 +13,7 @@ def cli() -> None:
     pass
 
 
-def printInstruction(instruction: HSInstruction) -> None:
+def print_instruction(instruction: HSInstruction) -> None:
     click.secho(f"     - {instruction.opCode.name}", fg="yellow", nl=False)
     for arg in instruction.args:
         click.secho(f" {arg.mode.name}", fg="bright_cyan", nl=False)
@@ -22,12 +21,12 @@ def printInstruction(instruction: HSInstruction) -> None:
     click.echo()
 
 
-def printConstant(constant: HSConstant) -> None:
+def print_constant(constant: HSConstant) -> None:
     click.secho(f"     - {constant.type.name}", fg="yellow", nl=False)
     click.secho(f" {constant.value}", fg="bright_cyan")
 
 
-def printHeaderInfo(hk_file: HavokScriptFile) -> None:
+def print_header(hk_file: HavokScriptFile) -> None:
     click.secho("Endianness: ", fg="yellow", nl=False)
     click.secho(hk_file.header.endianness.name, fg="bright_cyan")
 
@@ -52,7 +51,7 @@ def printHeaderInfo(hk_file: HavokScriptFile) -> None:
     click.echo()
 
 
-def printDebugInfo(debug_info: HSFunctionDebugInfo) -> None:
+def print_debug(debug_info: HSFunctionDebugInfo) -> None:
     click.secho("     - Function Name: ", fg="yellow", nl=False)
     click.secho(f"{debug_info.functionName}", fg="bright_cyan")
 
@@ -74,7 +73,7 @@ def printDebugInfo(debug_info: HSFunctionDebugInfo) -> None:
     click.echo()
 
 
-def printEnums(hk_file: HavokScriptFile) -> None:
+def print_enums(hk_file: HavokScriptFile) -> None:
     for enum in hk_file.enums.entries:
         click.secho("Name: ", fg="yellow", nl=False)
         click.secho(enum.name, fg="bright_cyan")
@@ -84,17 +83,16 @@ def printEnums(hk_file: HavokScriptFile) -> None:
     click.echo()
 
 
-def printStructures(structures: List[HSStructBlock]) -> None:
-    for structure in structures:
-        click.secho("- Structure: ", fg="bright_blue", nl=False)
-        click.secho(structure.header.name, fg="bright_cyan")
-        for member in structure.members:
-            click.secho(f"   - {member.header.type.name} ", fg="yellow", nl=False)
-            click.secho(member.header.name, fg="bright_cyan")
-        click.echo()
+def print_structures(structure: HSStructBlock) -> None:
+    click.secho("- Structure: ", fg="bright_blue", nl=False)
+    click.secho(structure.header.name, fg="bright_cyan")
+    for member in structure.members:
+        click.secho(f"   - {member.header.type.name} ", fg="yellow", nl=False)
+        click.secho(member.header.name, fg="bright_cyan")
+    click.echo()
 
 
-def printFunctions(function: HSFunction) -> None:
+def print_functions(function: HSFunction) -> None:
     if function.hasDebugInfo and function.debugInfo.functionName != "":
         click.secho(f"- Function: {function.debugInfo.functionName}", fg="bright_blue")
     else:
@@ -118,19 +116,19 @@ def printFunctions(function: HSFunction) -> None:
     click.secho("   Instructions:", fg="bright_blue")
 
     for instruction in function.instructions:
-        printInstruction(instruction)
+        print_instruction(instruction)
 
     click.secho("   Constants:", fg="bright_blue")
 
     for constant in function.constants:
-        printConstant(constant)
+        print_constant(constant)
 
     if function.hasDebugInfo:
         click.secho("   Debug Info:", fg="bright_blue")
-        printDebugInfo(function.debugInfo)
+        print_debug(function.debugInfo)
 
     for func in function.childFunctions:
-        printFunctions(func)
+        print_functions(func)
         click.echo()
 
 
@@ -141,16 +139,17 @@ def disassemble(path: click.File) -> None:
     hk_file.read(path)  # type: ignore
 
     click.secho("[Header Info]", fg="bright_green")
-    printHeaderInfo(hk_file)
+    print_header(hk_file)
 
     click.secho("[Enum Types]", fg="bright_green")
-    printEnums(hk_file)
+    print_enums(hk_file)
 
     click.secho("[Functions]", fg="bright_green")
-    printFunctions(hk_file.mainFunction)
+    print_functions(hk_file.mainFunction)
 
     click.secho("[Structures]", fg="bright_green")
-    printStructures(hk_file.structures)
+    for structure in hk_file.structures:
+        print_structures(structure)
 
 
 if __name__ == "__main__":
