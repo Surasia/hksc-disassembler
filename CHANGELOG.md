@@ -1,5 +1,11 @@
 # hksc-disassembler Changelog
 
+## 0.1.4 (2024-07-27)
+### Fixes:
+- Incorrect header data reading now fixed.
+### New Features:
+- Instructions with CONST() and the LOADK OpCode will now display the constant commented.
+
 ## 0.1.3 (2024-07-27)
 ### Fixes:
 - Floats and doubles are now read with their proper byte order.

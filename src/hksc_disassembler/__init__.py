@@ -1,5 +1,5 @@
 """A HavokScript 5.1 Disassembler"""
 
 __author__ = "Surasia"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __name__ = "hksc_disassembler"
