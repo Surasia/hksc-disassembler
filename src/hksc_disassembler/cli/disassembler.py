@@ -1,31 +1,15 @@
-from typing import List
 import click
 
 from ..loader.hs import HavokScriptFile
 from ..loader.hs_constant import HSConstant
 from ..loader.hs_debug import HSFunctionDebugInfo
 from ..loader.hs_function import HSFunction
-from ..loader.hs_instruction import HSInstruction
 from ..loader.hs_structure import HSStructBlock
-
+from .instruction_printer import print_instruction
 
 @click.group()
 def cli() -> None:
     pass
-
-# kinda messy, will refactor soon
-def print_instruction(instruction: HSInstruction, constants: List[HSConstant]) -> None:
-    click.secho(f"     - {instruction.opCode.name}", fg="yellow", nl=False)
-    for arg in instruction.args:
-        click.secho(f" {arg.mode.name}", fg="bright_cyan", nl=False)
-        if arg.mode == 2:
-            click.secho(f"({arg.value}) // {constants[arg.value].value}", fg="bright_blue", nl=False)
-        elif instruction.opCode == 25 and arg.mode == 0:
-            click.secho(f"({arg.value}) // {constants[arg.value].value}", fg="bright_blue", nl=False)
-        else:
-            click.secho(f"({arg.value})", fg="bright_blue", nl=False)
-    click.echo()
-
 
 def print_constant(constant: HSConstant) -> None:
     click.secho(f"     - {constant.type.name}", fg="yellow", nl=False)

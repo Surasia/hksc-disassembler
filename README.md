@@ -16,4 +16,5 @@
 
 ## Credits
 - Soupstream for the amazing [havok-script-tools](https://github.com/soupstream/havok-script-tools), most of which this project is based off of.
-- Jake-NotTheMuss for their very insightful [hksc](https://github.com/Jake-NotTheMuss/hksc)
+- Jake-NotTheMuss for their very insightful [hksc](https://github.com/Jake-NotTheMuss/hksc).
+- Katalash for their  [DSLuaDecompiler](https://github.com/katalash/DSLuaDecompiler), a very advanced decompiler for HavokScript.
