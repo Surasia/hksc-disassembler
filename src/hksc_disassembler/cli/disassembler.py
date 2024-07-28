@@ -137,9 +137,10 @@ def disassemble(path: click.File) -> None:
     click.secho("[Functions]", fg="bright_green")
     print_functions(hk_file.mainFunction)
 
-    click.secho("[Structures]", fg="bright_green")
-    for structure in hk_file.structures:
-        print_structures(structure)
+    if len(hk_file.structures) != 0:
+        click.secho("[Structures]", fg="bright_green")
+        for structure in hk_file.structures:
+            print_structures(structure)
 
 
 if __name__ == "__main__":
