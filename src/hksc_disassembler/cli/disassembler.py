@@ -50,13 +50,15 @@ def print_debug(debug_info: HSFunctionDebugInfo) -> None:
     click.secho("     - Path: ", fg="yellow", nl=False)
     click.secho(f"{debug_info.path}", fg="bright_cyan")
 
-    click.secho("       Locals: ", fg="bright_blue")
+    if len(debug_info.locals) != 0:
+        click.secho("       Locals: ", fg="bright_blue")
 
     for local in debug_info.locals:
         click.secho("          - ", fg="yellow", nl=False)
         click.secho(local.localName, fg="bright_cyan")
 
-    click.secho("       UpValues: ", fg="bright_blue")
+    if len(debug_info.upValues) != 0:
+        click.secho("       UpValues: ", fg="bright_blue")
 
     for upvalue in debug_info.upValues:
         click.secho("          - ", fg="yellow", nl=False)
@@ -108,7 +110,7 @@ def print_functions(function: HSFunction) -> None:
     click.secho("   Instructions:", fg="bright_blue")
 
     for instruction in function.instructions:
-        print_instruction(instruction, function.constants)
+        print_instruction(instruction, function.constants, function.debugInfo)
 
     click.secho("   Constants:", fg="bright_blue")
 
