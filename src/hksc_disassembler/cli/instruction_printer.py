@@ -37,6 +37,12 @@ def print_instruction(i: HSInstruction, c: List[HSConstant]) -> None:
             print_arg(i.args[1])
             print_constant(i.args[1], c)
 
+        case HSOpCode.SETGLOBAL:
+            print_arg(i.args[1])
+            print_constant(i.args[1], c)
+            click.secho(":= ", nl=False)
+            print_arg(i.args[0])
+
         case _:
             for arg in i.args:
                 if arg.mode == HSOpArgMode.CONST:
@@ -53,4 +59,4 @@ def print_arg(arg: HSOpArg) -> None:
 
 
 def print_constant(arg: HSOpArg, constants: List[HSConstant]) -> None:
-    click.secho(f"[{constants[arg.value].value}]", nl=False, fg="bright_blue")
+    click.secho(f"[{constants[arg.value].value}] ", nl=False, fg="bright_blue")
