@@ -105,7 +105,7 @@ def print_functions(function: HSFunction) -> None:
     click.secho(function.slotCount, fg="bright_cyan")
 
     click.secho("    - Unknown: ", fg="yellow", nl=False)
-    click.secho(function.unk, fg="brightcyan")
+    click.secho(function.unk, fg="bright_cyan")
 
     click.secho("   Instructions:", fg="bright_blue")
 
