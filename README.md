@@ -10,6 +10,9 @@
 
 `pip install hksc-disassembler`
 
+## Documentation
+Documentation for HavokScript types and internals can be found in the [docs](./docs) folder. As the project gets more complex, additional documentation will be made available to account for it. The goal for the documentation is to both provide context for the logic inside this project, but also document the largely undocumented HavokScript bytecode format.
+
 ## CLI Usage
 
 `hksc_disassembler disassamble <path_to_havokscript>`
