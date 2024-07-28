@@ -15,14 +15,11 @@ def print_instruction(i: HSInstruction, c: List[HSConstant]) -> None:
             click.secho(":= ", nl=False)
             print_arg(i.args[1])
             click.secho("-> ", nl=False)
-            print_arg(i.args[2])
-            print_constant(i.args[2], c)
 
         case HSOpCode.LOADK:
             print_arg(i.args[0])
             click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            print_constant(i.args[1], c)
+            print_arg(i.args[1], c, True)
 
         case HSOpCode.LOADBOOL:
             print_arg(i.args[0])
@@ -34,28 +31,30 @@ def print_instruction(i: HSInstruction, c: List[HSConstant]) -> None:
         case HSOpCode.GETGLOBAL_MEM | HSOpCode.GETGLOBAL:
             print_arg(i.args[0])
             click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            print_constant(i.args[1], c)
+            print_arg(i.args[1], c, True)
 
         case HSOpCode.SETGLOBAL:
-            print_arg(i.args[1])
-            print_constant(i.args[1], c)
+            print_arg(i.args[1], c, True)
             click.secho(":= ", nl=False)
             print_arg(i.args[0])
 
+        case HSOpCode.SETFIELD | HSOpCode.SETFIELD_R1:
+            print_arg(i.args[0])
+            print_arg(i.args[1], c)
+            click.secho(":= ", nl=False)
+            print_arg(i.args[2], c, True)
+
         case _:
             for arg in i.args:
-                if arg.mode == HSOpArgMode.CONST:
-                    print_arg(arg)
-                    print_constant(arg, c)
-                else:
-                    print_arg(arg)
+                print_arg(arg, c)
     click.echo()
 
 
-def print_arg(arg: HSOpArg) -> None:
+def print_arg(arg: HSOpArg, constants: List[HSConstant] = [], is_const: bool = False) -> None:
     click.secho(f"{arg.mode.name}(", fg="bright_cyan", nl=False)
     click.secho(f"{arg.value}) ", fg="bright_blue", nl=False)
+    if arg.mode == HSOpArgMode.CONST or is_const:
+        print_constant(arg, constants)
 
 
 def print_constant(arg: HSOpArg, constants: List[HSConstant]) -> None:
