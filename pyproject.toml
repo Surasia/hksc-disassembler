@@ -39,7 +39,12 @@ build-backend = "setuptools.build_meta"
 
 [tool.rye]
 managed = true
-dev-dependencies = ["pyright", "mypy", "pytest", "ruff"]
+dev-dependencies = [
+    "pyright",
+    "mypy",
+    "pytest>=8.3.2",
+    "ruff",
+]
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -74,4 +79,3 @@ docstring-code-format = true
 length-sort = true
 length-sort-straight = true
 combine-as-imports = true
-extra-standard-library = ["typing_extensions"]

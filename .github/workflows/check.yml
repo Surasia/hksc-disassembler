@@ -7,14 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.7
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.1.1 
         with:
-          python-version: "3.12"
+          python-version: "3.12.3"
       
       - name: Install Rye
-        uses: eifinger/setup-rye@v4.0.2
+        uses: eifinger/setup-rye@v4.2.1
         with: 
           version: 'latest'
           enable-cache: true
@@ -24,3 +24,4 @@ jobs:
         run: |
          rye sync --all-features
          rye run lint
+         rye test

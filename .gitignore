@@ -12,3 +12,6 @@ wheels/
 # linters
 .ruff_cache/
 .mypy_cache/
+
+# editors
+.vscode
