@@ -1,7 +1,7 @@
 import click
 from typing import List
 
-from hksc_disassembler.loader.hs_debug import HSFunctionDebugInfo
+from ..loader.hs_debug import HSFunctionDebugInfo
 
 from ..loader.hs_opcodes import HSOpArgMode, HSOpCode, HSType
 from ..loader.hs_instruction import HSInstruction, HSOpArg
