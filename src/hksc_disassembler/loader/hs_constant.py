@@ -21,7 +21,7 @@ class HSConstant:
             case HSType.TBOOLEAN:
                 self.value = read_bool(f, False, 1, header.byteorder)
             case HSType.TLIGHTUSERDATA:
-                self.value = read_integer(f, True, 8, header.byteorder)
+                self.value = read_integer(f, True, header.tSize, header.byteorder)
             case HSType.TNUMBER:
                 self.value = read_t_number(f, header)
             case HSType.TSTRING:
