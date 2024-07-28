@@ -1,3 +1,4 @@
+from enum import IntFlag
 from io import BytesIO
 from typing import List
 
@@ -8,11 +9,17 @@ from .hs_instruction import HSInstruction
 from .hs_constant import HSConstant
 
 
+class HSVarArg(IntFlag):
+    VARARG_HASARG = 1
+    VARARG_ISVARARG = 2
+    VARARG_NEEDSARG = 4
+
+
 class HSFunction:
     def __init__(self) -> None:
         self.upValueCount: int = -1
         self.paramCount: int = -1
-        self.isVarArg: int = -1
+        self.isVarArg: HSVarArg = HSVarArg(1)
         self.slotCount: int = -1
         self.maxStackCount: int = -1
         self.instructionCount: int = -1
@@ -28,7 +35,7 @@ class HSFunction:
     def read(self, f: BytesIO, header: HSHeader) -> None:
         self.upValueCount = read_integer(f, False, 4, header.byteorder)
         self.paramCount = read_integer(f, False, 4, header.byteorder)
-        self.isVarArg = read_integer(f, False, 1, header.byteorder)
+        self.isVarArg = HSVarArg(read_integer(f, False, 1, header.byteorder))
         self.slotCount = read_integer(f, False, 4, header.byteorder)
         self.maxStackCount = read_integer(f, False, 4, header.byteorder)
         self.instructionCount = read_integer(f, False, 4, header.byteorder)
