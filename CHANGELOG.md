@@ -1,5 +1,12 @@
 # hksc-disassembler Changelog
 
+## 0.2.0 (2024-07-29)
+### New Features:
+- Documentation has been added for basic info regarding HavokScript
+- Many OpCodes will now print according to their lopcodes.h definitions.
+- Tests have been added as part of the CI.
+- HSVarArg is now a flag.
+
 ## 0.1.5 (2024-07-28)
 ### Fixes:
 - Structures will now only print if there's more than one.
