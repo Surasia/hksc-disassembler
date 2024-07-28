@@ -104,8 +104,8 @@ def print_functions(function: HSFunction) -> None:
     click.secho("    - Slot Count: ", fg="yellow", nl=False)
     click.secho(function.slotCount, fg="bright_cyan")
 
-    click.secho("    - Max Stack Count: ", fg="yellow", nl=False)
-    click.secho(function.maxStackCount, fg="bright_cyan")
+    click.secho("    - Unknown: ", fg="yellow", nl=False)
+    click.secho(function.unk, fg="brightcyan")
 
     click.secho("   Instructions:", fg="bright_blue")
 
