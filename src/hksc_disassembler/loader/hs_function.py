@@ -21,7 +21,7 @@ class HSFunction:
         self.paramCount: int = -1
         self.isVarArg: HSVarArg = HSVarArg(1)
         self.slotCount: int = -1
-        self.maxStackCount: int = -1
+        self.unk: int = -1
         self.instructionCount: int = -1
         self.instructions: List[HSInstruction] = []
         self.constantCount: int = -1
@@ -37,7 +37,7 @@ class HSFunction:
         self.paramCount = read_integer(f, False, 4, header.byteorder)
         self.isVarArg = HSVarArg(read_integer(f, False, 1, header.byteorder))
         self.slotCount = read_integer(f, False, 4, header.byteorder)
-        self.maxStackCount = read_integer(f, False, 4, header.byteorder)
+        self.unk = read_integer(f, False, 4, header.byteorder)
         self.instructionCount = read_integer(f, False, 4, header.byteorder)
 
         f.seek(f.tell() + 3 & ~3)  # Align to 4 Bytes
