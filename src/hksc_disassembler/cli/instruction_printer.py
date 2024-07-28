@@ -47,7 +47,7 @@ def print_instruction(i: HSInstruction, c: List[HSConstant], debug_info: HSFunct
             print_arg(i.args[0])
             print_arg(i.args[1], c)
             click.secho(":= ", nl=False)
-            print_arg(i.args[2], c, True)
+            print_arg(i.args[2], c)
 
         case HSOpCode.MOVE:
             print_arg(i.args[0])
