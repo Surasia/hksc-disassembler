@@ -15,6 +15,7 @@ def print_instruction(i: HSInstruction, c: List[HSConstant]) -> None:
             click.secho(":= ", nl=False)
             print_arg(i.args[1])
             click.secho("-> ", nl=False)
+            print_arg(i.args[2], c)
 
         case HSOpCode.LOADK:
             print_arg(i.args[0])
