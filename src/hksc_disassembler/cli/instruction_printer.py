@@ -30,7 +30,7 @@ def print_instruction(i: HSInstruction, c: List[HSConstant]) -> None:
             print_arg(i.args[1])
             click.secho(f"[{bool(i.args[1].value)}] ", fg="bright_blue", nl=False)
             print_arg(i.args[2])
-        
+
         case HSOpCode.GETGLOBAL_MEM | HSOpCode.GETGLOBAL:
             print_arg(i.args[0])
             click.secho(":= ", nl=False)

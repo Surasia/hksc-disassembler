@@ -7,9 +7,11 @@ from ..loader.hs_function import HSFunction
 from ..loader.hs_structure import HSStructBlock
 from .instruction_printer import print_instruction
 
+
 @click.group()
 def cli() -> None:
     pass
+
 
 def print_constant(constant: HSConstant) -> None:
     click.secho(f"     - {constant.type.name}", fg="yellow", nl=False)
