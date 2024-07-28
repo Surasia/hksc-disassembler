@@ -1,5 +1,9 @@
 # hksc-disassembler Changelog
 
+## 0.2.1 (2024-07-29)
+### Fixes:
+- Incorrect reading on the SETTABLE instruction has been fixed.
+
 ## 0.2.0 (2024-07-29)
 ### New Features:
 - Documentation has been added for basic info regarding HavokScript
