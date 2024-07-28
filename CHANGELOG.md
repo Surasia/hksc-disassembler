@@ -1,5 +1,11 @@
 # hksc-disassembler Changelog
 
+## 0.1.5 (2024-07-28)
+### Fixes:
+- Structures will now only print if there's more than one.
+### New Features:
+- Moved instructions to its own printer, which will now properly print out values for GETFIELD, GETFIELD_R1, LOADK, LOADBOOL, GETGLOBAL_MEM and GETGLOBAL.
+
 ## 0.1.4 (2024-07-27)
 ### Fixes:
 - Incorrect header data reading now fixed.
