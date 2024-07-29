@@ -65,7 +65,7 @@ pythonVersion = "3.12"
 reportImplicitOverride = true
 
 [tool.ruff]
-line-length = 140
+line-length = 125
 output-format = "grouped"
 target-version = "py312"
 

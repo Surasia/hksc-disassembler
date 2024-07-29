@@ -259,7 +259,7 @@ def print_instruction(i: HSInstruction, c: List[HSConstant], debug_info: HSFunct
     click.echo()
 
 
-def print_arg(arg: HSOpArg, constants: List[HSConstant] = [], is_const: bool = False) -> None:
+def print_arg(arg: HSOpArg, constants: List[HSConstant] = None, is_const: bool = False) -> None:
     click.secho(f"{arg.mode.name}(", fg="bright_cyan", nl=False)
     click.secho(f"{arg.value}) ", fg="bright_blue", nl=False)
     if arg.mode == HSOpArgMode.CONST or is_const:

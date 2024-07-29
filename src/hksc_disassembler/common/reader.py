@@ -29,5 +29,6 @@ def read_double(f: BytesIO, byteorder: str = "big") -> float:
     else:
         return struct.unpack("d", f.read(4))[0]
 
+
 def align_to_bytes(f: BytesIO, byte: int) -> None:
     f.seek(f.tell() + (byte - 1) & ~(byte - 1))

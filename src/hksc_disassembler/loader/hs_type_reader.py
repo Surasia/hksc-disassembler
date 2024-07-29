@@ -5,7 +5,7 @@ from ..common.reader import read_integer, read_string, read_double, read_float
 
 
 def read_t_string(f: BytesIO, header: HSHeader) -> str:
-    size: int = 0
+    size: int
     string: str = ""
 
     if header.tSize == 4:
@@ -21,7 +21,7 @@ def read_t_string(f: BytesIO, header: HSHeader) -> str:
 
 
 def read_t_number(f: BytesIO, header: HSHeader) -> int | float:
-    value: int | float = 0
+    value: int | float
     if header.numberType == 1:
         value = read_integer(f, True, header.intSize, header.byteorder)
     else:

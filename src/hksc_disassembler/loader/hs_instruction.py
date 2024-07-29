@@ -2,7 +2,7 @@ from typing import List
 from io import BytesIO
 
 from ..common.reader import read_integer
-from .hs_opcodes import HSOpArgMode, HSOpArgModeBC, HSOpCode, HSOpModeList, HSOpModes, HSOpArgModeA, HSOpMode
+from .hs_opcodes import HSOpArgMode, HSOpArgModeBC, HSOpCode, HSOpModeList, HSModes, HSOpArgModeA, HSOpMode
 
 
 class HSInstructionException(Exception):
@@ -23,20 +23,20 @@ class HSInstruction:
     def read(self, f: BytesIO, endianness: str) -> None:
         raw: int = read_integer(f, False, 4, endianness)
         self.opCode = HSOpCode(raw >> 25)
-        opModes: HSOpModes = HSOpModeList[self.opCode]
-        self.read_op_a(raw, opModes)
-        self.read_op_bc(raw, opModes)
+        op_modes: HSModes = HSOpModeList[self.opCode]
+        self.read_op_a(raw, op_modes)
+        self.read_op_bc(raw, op_modes)
 
-    def read_op_a(self, raw: int, opModes: HSOpModes) -> None:
-        mode: HSOpArgMode = HSOpArgMode.NUMBER if opModes.opArgModeA == HSOpArgModeA.UNUSED else HSOpArgMode.REG
+    def read_op_a(self, raw: int, op_modes: HSModes) -> None:
+        mode: HSOpArgMode = HSOpArgMode.NUMBER if op_modes.opArgModeA == HSOpArgModeA.UNUSED else HSOpArgMode.REG
         value: int = raw & 0xFF
         self.args.append(HSOpArg(mode, value))
 
-    def read_op_abc_b(self, raw: int, opModes: HSOpModes) -> None:
+    def read_op_abc_b(self, raw: int, op_modes: HSModes) -> None:
         mode: HSOpArgMode
         value: int
 
-        match opModes.opArgModeB:
+        match op_modes.opArgModeB:
             case HSOpArgModeBC.NUMBER:
                 mode = HSOpArgMode.NUMBER
                 value = (raw >> 17) & 0xFF
@@ -46,7 +46,7 @@ class HSInstruction:
             case HSOpArgModeBC.REG:
                 mode = HSOpArgMode.REG
                 value = (raw >> 17) & 0xFF
-            case HSOpArgModeBC.REG_OR_CONST:
+            case HSOpArgModeBC.REG_CONST:
                 value = (raw >> 17) & 0x1FF
                 if value < 0x100:
                     mode = HSOpArgMode.REG
@@ -61,11 +61,11 @@ class HSInstruction:
 
         self.args.append(HSOpArg(mode, value))
 
-    def read_op_abc_c(self, raw: int, opModes: HSOpModes) -> None:
+    def read_op_abc_c(self, raw: int, op_modes: HSModes) -> None:
         mode: HSOpArgMode
         value: int
 
-        match opModes.opArgModeC:
+        match op_modes.opArgModeC:
             case HSOpArgModeBC.NUMBER:
                 mode = HSOpArgMode.NUMBER
                 value = (raw >> 8) & 0xFF
@@ -75,7 +75,7 @@ class HSInstruction:
             case HSOpArgModeBC.REG:
                 mode = HSOpArgMode.REG
                 value = (raw >> 8) & 0xFF
-            case HSOpArgModeBC.REG_OR_CONST:
+            case HSOpArgModeBC.REG_CONST:
                 value = (raw >> 8) & 0x1FF
                 if value < 0x100:
                     mode = HSOpArgMode.REG
@@ -90,10 +90,10 @@ class HSInstruction:
 
         self.args.append(HSOpArg(mode, value))
 
-    def read_op_non_abc_b(self, raw: int, opModes: HSOpModes) -> None:
+    def read_op_non_abc_b(self, raw: int, op_modes: HSModes) -> None:
         value = (raw >> 8) & 0x1FFFF
         mode = HSOpArgMode(0)
-        if opModes.opMode == HSOpMode.ASBX:
+        if op_modes.opMode == HSOpMode.ASBX:
             value -= 0xFFFF
         if HSOpArgModeBC.NUMBER or HSOpArgModeBC.OFFSET:
             mode = HSOpArgMode.NUMBER
@@ -102,12 +102,12 @@ class HSInstruction:
 
         self.args.append(HSOpArg(mode, value))
 
-    def read_op_bc(self, raw: int, opModes: HSOpModes) -> None:
-        if opModes.opArgModeB != HSOpArgModeBC.UNUSED:
-            if opModes.opMode == HSOpMode.ABC:
-                self.read_op_abc_b(raw, opModes)
+    def read_op_bc(self, raw: int, op_modes: HSModes) -> None:
+        if op_modes.opArgModeB != HSOpArgModeBC.UNUSED:
+            if op_modes.opMode == HSOpMode.ABC:
+                self.read_op_abc_b(raw, op_modes)
             else:
-                self.read_op_non_abc_b(raw, opModes)
+                self.read_op_non_abc_b(raw, op_modes)
 
-        if opModes.opMode == HSOpMode.ABC and opModes.opArgModeC != HSOpArgModeBC.UNUSED:
-            self.read_op_abc_c(raw, opModes)
+        if op_modes.opMode == HSOpMode.ABC and op_modes.opArgModeC != HSOpArgModeBC.UNUSED:
+            self.read_op_abc_c(raw, op_modes)
