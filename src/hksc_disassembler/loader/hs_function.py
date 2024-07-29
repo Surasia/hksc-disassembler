@@ -2,7 +2,7 @@ from enum import IntFlag
 from io import BytesIO
 from typing import List
 
-from ..common.reader import read_integer
+from ..common.reader import align_to_bytes, read_integer
 from .hs_debug import HSFunctionDebugInfo
 from .hs_header import HSHeader
 from .hs_instruction import HSInstruction
@@ -40,7 +40,7 @@ class HSFunction:
         self.unk = read_integer(f, False, 4, header.byteorder)
         self.instructionCount = read_integer(f, False, 4, header.byteorder)
 
-        f.seek(f.tell() + 3 & ~3)  # Align to 4 Bytes
+        align_to_bytes(f, 4)
 
         for _ in range(self.instructionCount):
             instruction: HSInstruction = HSInstruction()

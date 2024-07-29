@@ -39,16 +39,11 @@ class HSFunctionDebugInfo:
         self.lineEnd = read_integer(f, False, 4, header.byteorder)
         self.path = read_t_string(f, header)
         self.functionName = read_t_string(f, header)
-
-        for _ in range(self.lineCount):
-            line: int = read_integer(f, False, 4, header.byteorder)
-            self.lines.append(line)
+        self.lines = [read_integer(f, False, 4, header.byteorder) for _ in range(self.lineCount)]
 
         for _ in range(self.localsCount):
             local: HSFunctionDebugInfoLocals = HSFunctionDebugInfoLocals()
             local.read(f, header)
             self.locals.append(local)
 
-        for _ in range(self.upValueCount):
-            upValue: str = read_t_string(f, header)
-            self.upValues.append(upValue)
+        self.upValues = [read_t_string(f, header) for _ in range(self.upValueCount)]

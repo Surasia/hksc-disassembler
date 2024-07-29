@@ -16,7 +16,7 @@ class HSEnum:
 
         if self.length != 0:
             self.name = read_string(f, self.length - 1)
-            f.seek(1, 1)  # Skip terminator
+            f.seek(1, 1)
 
 
 class HSEnums:

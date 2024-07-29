@@ -29,4 +29,4 @@ class HSConstant:
             case HSType.TUI64:
                 self.value = read_integer(f, False, 8, header.byteorder)
             case _:
-                assert False, f"Type not implemented: {self.type.name}"
+                raise NotImplementedError(f"Type not implemented: {self.type.name}")
