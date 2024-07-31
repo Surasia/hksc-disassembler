@@ -1,18 +1,12 @@
 from io import BytesIO
 
-from .hs_header import HSHeader
+from .hs_header import HSHeader, HSNumberType
 from ..common.reader import read_integer, read_string, read_double, read_float
 
 
 def read_t_string(f: BytesIO, header: HSHeader) -> str:
-    size: int
+    size: int = read_integer(f, False, header.tSize, header.byteorder)
     string: str = ""
-
-    if header.tSize == 4:
-        size = read_integer(f, False, 4, header.byteorder)
-    else:
-        size = read_integer(f, False, 8, header.byteorder)
-
     if size != 0:
         string = read_string(f, size - 1)
         f.seek(1, 1)
@@ -22,7 +16,7 @@ def read_t_string(f: BytesIO, header: HSHeader) -> str:
 
 def read_t_number(f: BytesIO, header: HSHeader) -> int | float:
     value: int | float
-    if header.numberType == 1:
+    if header.numberType == HSNumberType.INTEGER:
         value = read_integer(f, True, header.intSize, header.byteorder)
     else:
         if header.intSize == 8:
