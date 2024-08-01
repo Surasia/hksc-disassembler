@@ -1,5 +1,9 @@
 # hksc-disassembler Changelog
 
+## 0.2.3 (2024-08-01)
+### Fixes:
+- Formatting issues with debug info has been fixed.
+
 ## 0.2.2 (2024-08-01)
 ### Improvements:
 - Constants, Instructions and Debug Info path will now only print if they exist.
