@@ -1,272 +1,272 @@
 import click
-from typing import List, Optional
 
-from ..loader.hs_debug import HSFunctionDebugInfo
-
+from ..loader.hs_function import HSFunction
 from ..loader.hs_opcodes import HSOpArgMode, HSOpCode, HSType
 from ..loader.hs_instruction import HSInstruction, HSOpArg
-from ..loader.hs_constant import HSConstant
 
 
-def print_instruction(i: HSInstruction, c: List[HSConstant], debug_info: HSFunctionDebugInfo) -> None:
-    click.secho(f"     - {i.opCode.name}: ", fg="yellow", nl=False)
+class InstructionPrinter:
+    def __init__(self, function: HSFunction):
+        self.function: HSFunction = function
 
-    match i.opCode:
-        case HSOpCode.GETFIELD | HSOpCode.GETFIELD_R1 | HSOpCode.GETFIELD_MM:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            print_arg(i.args[2], c)
+    def print_instructions(self) -> None:
+        for instruction in self.function.instructions:
+            self.print_instruction(instruction)
 
-        case HSOpCode.LOADK:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c, True)
+    def print_instruction(self, i: HSInstruction) -> None:
+        if i.opCode != HSOpCode.DATA:
+            click.secho(f"   - {i.opCode.name}: ", fg="yellow", nl=False)
 
-        case HSOpCode.LOADBOOL:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            click.secho(f"[{bool(i.args[1].value)}]", fg="bright_blue", nl=False)
-            click.secho("; ", nl=False)
-            print_arg(i.args[2])
-            if bool(i.args[2].value):
-                click.secho("pc++", nl=False)
+        match i.opCode:
+            case HSOpCode.GETFIELD | HSOpCode.GETFIELD_R1 | HSOpCode.GETFIELD_MM:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                self.print_arg(i.args[2])
 
-        case HSOpCode.GETGLOBAL_MEM | HSOpCode.GETGLOBAL:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c, True)
+            case HSOpCode.LOADK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1], True)
 
-        case HSOpCode.SETGLOBAL:
-            print_arg(i.args[1], c, True)
-            click.secho(":= ", nl=False)
-            print_arg(i.args[0])
+            case HSOpCode.LOADBOOL:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(f"[{bool(i.args[1].value)}]", fg="bright_blue", nl=False)
+                click.secho("; ", nl=False)
+                self.print_arg(i.args[2])
+                if bool(i.args[2].value):
+                    click.secho("pc++", nl=False)
 
-        case HSOpCode.SETFIELD | HSOpCode.SETFIELD_R1:
-            print_arg(i.args[0])
-            print_arg(i.args[1], c)
-            click.secho(":= ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.GETGLOBAL_MEM | HSOpCode.GETGLOBAL:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1], True)
 
-        case HSOpCode.MOVE:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
+            case HSOpCode.SETGLOBAL:
+                self.print_arg(i.args[1], True)
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[0])
 
-        case HSOpCode.LOADNIL:
-            print_arg(i.args[0])
-            click.secho(":= ... := ", nl=False)
-            print_arg(i.args[1])
-            click.secho(":= nil", nl=False)
+            case HSOpCode.SETFIELD | HSOpCode.SETFIELD_R1:
+                self.print_arg(i.args[0])
+                self.print_arg(i.args[1])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.GETUPVAL:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            click.secho("UpValue", nl=False, fg="bright_cyan")
-            click.secho(f"[{i.args[1].value}]", fg="bright_blue", nl=False)
-            if debug_info.upValueCount != 0 and i.args[1].value <= debug_info.upValueCount:
-                click.secho(f" [{debug_info.upValues[i.args[1].value]}]", fg="bright_blue", nl=False)
+            case HSOpCode.MOVE:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
 
-        case HSOpCode.GETTABLE | HSOpCode.GETTABLE_S:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            click.secho("Index: ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.LOADNIL:
+                self.print_arg(i.args[0])
+                click.secho(":= ... := ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(":= nil", nl=False)
 
-        case HSOpCode.SETUPVAL | HSOpCode.SETUPVAL_R1:
-            print_arg(i.args[1])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[0])
-            click.secho("UpValue", nl=False, fg="bright_cyan")
-            click.secho(f"[{i.args[0].value}]", fg="bright_blue", nl=False)
-            if debug_info.upValueCount != 0 and i.args[0].value <= debug_info.upValueCount:
-                click.secho(f"-- {debug_info.upValues[i.args[0].value]}", fg="bright_blue", nl=False)
+            case HSOpCode.GETUPVAL:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("UpValue", nl=False, fg="bright_cyan")
+                click.secho(f"[{i.args[1].value}]", fg="bright_blue", nl=False)
 
-        case HSOpCode.SETTABLE | HSOpCode.SETTABLE_S:
-            print_arg(i.args[0])
-            click.secho("Index: ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho(":= ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.GETTABLE | HSOpCode.GETTABLE_S:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("Index: ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.NEWTABLE:
-            print_arg(i.args[0])
-            click.secho(":= {} size = ", nl=False)
-            print_arg(i.args[1])
-            print_arg(i.args[2])
+            case HSOpCode.SETUPVAL | HSOpCode.SETUPVAL_R1:
+                self.print_arg(i.args[1])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho("UpValue", nl=False, fg="bright_cyan")
+                click.secho(f"[{i.args[0].value}]", fg="bright_blue", nl=False)
 
-        case HSOpCode.SELF:
-            print_arg(i.args[0])
-            click.secho(f"[{i.args[0].value + 1}] ", nl=False, fg="bright_blue")
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            click.secho("; ", nl=False)
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            click.secho("Index: ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.SETTABLE | HSOpCode.SETTABLE_S | HSOpCode.SETTABLE_BK | HSOpCode.SETTABLE_S_BK:
+                self.print_arg(i.args[0])
+                click.secho("Index: ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.ADD:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("+ ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.NEWTABLE:
+                self.print_arg(i.args[0])
+                click.secho(":= {} size = ", nl=False)
+                self.print_arg(i.args[1])
+                self.print_arg(i.args[2])
 
-        case HSOpCode.SUB:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("- ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.SELF:
+                self.print_arg(i.args[0])
+                click.secho(f"[{i.args[0].value + 1}] ", nl=False, fg="bright_blue")
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("; ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("Index: ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.MUL:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("* ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.ADD | HSOpCode.ADD_BK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("+ ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.DIV:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("/ ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.SUB | HSOpCode.SUB_BK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("- ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.MOD:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("% ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.MUL | HSOpCode.MUL_BK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("* ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.POW:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("^ ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.DIV | HSOpCode.DIV_BK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("/ ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.UNM:
-            print_arg(i.args[0])
-            click.secho(":= -", nl=False)
-            print_arg(i.args[1], c)
+            case HSOpCode.MOD | HSOpCode.MOD_BK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("% ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.NOT:
-            print_arg(i.args[0])
-            click.secho(":= not ", nl=False)
-            print_arg(i.args[1], c)
+            case HSOpCode.POW | HSOpCode.POW_BK:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("^ ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.LEN:
-            print_arg(i.args[0])
-            click.secho(":= length of ", nl=False)
-            print_arg(i.args[1], c)
+            case HSOpCode.UNM:
+                self.print_arg(i.args[0])
+                click.secho(":= -", nl=False)
+                self.print_arg(i.args[1])
 
-        case HSOpCode.CONCAT:
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho(".. ... .. ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.NOT | HSOpCode.NOT_R1:
+                self.print_arg(i.args[0])
+                click.secho(":= not ", nl=False)
+                self.print_arg(i.args[1])
 
-        case HSOpCode.JMP:
-            click.secho("pc += ", nl=False)
-            print_arg(i.args[1])
+            case HSOpCode.LEN:
+                self.print_arg(i.args[0])
+                click.secho(":= length of ", nl=False)
+                self.print_arg(i.args[1])
 
-        case HSOpCode.EQ:
-            click.secho("if ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("== ", nl=False)
-            print_arg(i.args[2], c)
-            click.secho("~= ", nl=False)
-            print_arg(i.args[0])
-            click.secho("then pc++", nl=False)
+            case HSOpCode.CONCAT:
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(".. ... .. ", nl=False)
+                self.print_arg(i.args[2])
 
-        case HSOpCode.LT:
-            click.secho("if ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("< ", nl=False)
-            print_arg(i.args[2], c)
-            click.secho("~= ", nl=False)
-            print_arg(i.args[0])
-            click.secho("then pc++", nl=False)
+            case HSOpCode.JMP:
+                click.secho("pc += ", nl=False)
+                self.print_arg(i.args[1])
 
-        case HSOpCode.LE:
-            click.secho("if ", nl=False)
-            print_arg(i.args[1], c)
-            click.secho("<= ", nl=False)
-            print_arg(i.args[2], c)
-            click.secho("~= ", nl=False)
-            print_arg(i.args[0])
-            click.secho("then pc++", nl=False)
+            case HSOpCode.EQ | HSOpCode.EQ_BK:
+                click.secho("if ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("== ", nl=False)
+                self.print_arg(i.args[2])
+                click.secho("~= ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho("then pc++", nl=False)
 
-        case HSOpCode.TEST:
-            click.secho("if not ", nl=False)
-            print_arg(i.args[0])
-            click.secho("<=> ", nl=False)
-            print_arg(i.args[1])
-            click.secho("then pc++", nl=False)
+            case HSOpCode.LT | HSOpCode.LT_BK:
+                click.secho("if ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("< ", nl=False)
+                self.print_arg(i.args[2])
+                click.secho("~= ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho("then pc++", nl=False)
 
-        case HSOpCode.TESTSET:
-            click.secho("if ", nl=False)
-            print_arg(i.args[1])
-            click.secho("<=> ", nl=False)
-            print_arg(i.args[2])
-            click.secho("then ", nl=False)
-            print_arg(i.args[0])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[1])
-            click.secho("else pc++", nl=False)
+            case HSOpCode.LE | HSOpCode.LE_BK:
+                click.secho("if ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("<= ", nl=False)
+                self.print_arg(i.args[2])
+                click.secho("~= ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho("then pc++", nl=False)
 
-        case HSOpCode.CHECKTYPE:
-            print_arg(i.args[0])
-            click.secho("? ", nl=False)
-            print_arg(i.args[1])
-            click.secho(f"[{HSType(i.args[1].value).name}]", nl=False, fg="bright_blue")
+            case HSOpCode.TEST:
+                click.secho("if not ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho("<=> ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("then pc++", nl=False)
 
-        case HSOpCode.NEWSTRUCT:
-            print_arg(i.args[0])
-            click.secho(":= {} size = ", nl=False)
-            print_arg(i.args[1])
-            print_arg(i.args[2])
+            case HSOpCode.TESTSET:
+                click.secho("if ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("<=> ", nl=False)
+                self.print_arg(i.args[2])
+                click.secho("then ", nl=False)
+                self.print_arg(i.args[0])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho("else pc++", nl=False)
 
-        case HSOpCode.SETSLOTN:
-            print_arg(i.args[0])
-            click.secho("Slot: ", nl=False)
-            print_arg(i.args[1])
-            click.secho(":= nil", nl=False)
+            case HSOpCode.CHECKTYPE:
+                self.print_arg(i.args[0])
+                click.secho("? ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(f"[{HSType(i.args[1].value).name}]", nl=False, fg="bright_blue")
 
-        case HSOpCode.SETSLOTI | HSOpCode.SETSLOTS | HSOpCode.SETSLOTMT | HSOpCode.SETSLOT:
-            print_arg(i.args[0])
-            click.secho("Slot: ", nl=False)
-            print_arg(i.args[1])
-            click.secho(":= ", nl=False)
-            print_arg(i.args[2], c)
+            case HSOpCode.NEWSTRUCT:
+                self.print_arg(i.args[0])
+                click.secho(":= {} size = ", nl=False)
+                self.print_arg(i.args[1])
+                self.print_arg(i.args[2])
 
-        case HSOpCode.DATA:
-            print_arg(i.args[0])
-            click.secho("-> ", nl=False)
-            print_arg(i.args[1])
+            case HSOpCode.SETSLOTN:
+                self.print_arg(i.args[0])
+                click.secho("Slot: ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(":= nil", nl=False)
 
-        case _:
-            for arg in i.args:
-                print_arg(arg, c)
-    click.echo()
+            case HSOpCode.SETSLOTI | HSOpCode.SETSLOTS | HSOpCode.SETSLOTMT | HSOpCode.SETSLOT:
+                self.print_arg(i.args[0])
+                click.secho("Slot: ", nl=False)
+                self.print_arg(i.args[1])
+                click.secho(":= ", nl=False)
+                self.print_arg(i.args[2])
 
+            case HSOpCode.DATA:
+                ...
 
-def print_arg(arg: HSOpArg, constants: Optional[List[HSConstant]] = None, is_const: bool = False) -> None:
-    click.secho(f"{arg.mode.name}(", fg="bright_cyan", nl=False)
-    click.secho(f"{arg.value}) ", fg="bright_blue", nl=False)
+            case _:
+                for arg in i.args:
+                    self.print_arg(arg)
 
-    if arg.mode == HSOpArgMode.CONST or is_const:
-        if constants:
-            print_constant(arg, constants)
+        if i.opCode != HSOpCode.DATA:
+            click.echo()
 
+    def print_arg(self, arg: HSOpArg, is_const: bool = False) -> None:
+        click.secho(f"{arg.mode.name}(", fg="bright_cyan", nl=False)
+        click.secho(f"{arg.value}) ", fg="bright_blue", nl=False)
 
-def print_constant(arg: HSOpArg, constants: List[HSConstant]) -> None:
-    click.secho(f"[{constants[arg.value].value}] ", nl=False, fg="bright_blue")
+        if arg.mode == HSOpArgMode.CONST or is_const:
+            if self.function.constants:
+                self.print_constant(arg)
+
+    def print_constant(self, arg: HSOpArg) -> None:
+        click.secho(f"[{self.function.constants[arg.value].value}] ", nl=False, fg="bright_blue")
