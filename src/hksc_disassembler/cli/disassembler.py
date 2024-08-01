@@ -44,18 +44,18 @@ def print_header(hk_file: HavokScriptFile) -> None:
 
 
 def print_debug(debug_info: HSFunctionDebugInfo) -> None:
-    click.secho("     - Function Name: ", fg="yellow", nl=False)
+    click.secho("   - Function Name: ", fg="yellow", nl=False)
     click.secho(f"{debug_info.functionName}", fg="bright_cyan")
 
     if debug_info.path != "":
-        click.secho("     - Path: ", fg="yellow", nl=False)
+        click.secho("   - Path: ", fg="yellow", nl=False)
         click.secho(f"{debug_info.path}", fg="bright_cyan")
 
     if len(debug_info.locals) != 0:
-        click.secho("       Locals: ", fg="bright_blue")
+        click.secho("     Locals: ", fg="yellow")
 
     for local in debug_info.locals:
-        click.secho("          - ", fg="yellow", nl=False)
+        click.secho("      - ", fg="yellow", nl=False)
         click.secho(local.localName, fg="bright_cyan")
 
     if len(debug_info.upValues) != 0:
@@ -76,8 +76,7 @@ def print_enums(hk_file: HavokScriptFile) -> None:
 
 
 def print_structures(structure: HSStructBlock) -> None:
-    click.secho("- Structure: ", fg="bright_blue", nl=False)
-    click.secho(structure.header.name, fg="bright_cyan")
+    click.secho(f"- {structure.header.name}:", fg="bright_blue")
     for member in structure.members:
         click.secho(f"   - {member.header.type.name} ", fg="yellow", nl=False)
         click.secho(member.header.name, fg="bright_cyan")
@@ -106,7 +105,7 @@ def print_functions(function: HSFunction) -> None:
     click.secho(function.unk, fg="bright_cyan")
 
     if function.instructionCount != 0:
-        click.secho(" Instructions:", fg="bright_blue")
+        click.secho("  Instructions:", fg="bright_blue")
         printer = InstructionPrinter(function)
         printer.print_instructions()
 
