@@ -1,14 +1,15 @@
 [project]
 name = "hksc_disassembler"
-version = "0.2.1"
+version = "0.2.2"
 description = "A HavokScript 5.1 Disassembler"
 authors = [{ name = "Surasia" }]
 license = { file = "LICENSE.txt" }
 dependencies = ["click~=8.1.7"]
 readme = "README.md"
-requires-python = ">= 3.11.0"
+requires-python = ">= 3.10.0"
 classifiers = [
     "Typing :: Typed",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

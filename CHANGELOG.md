@@ -1,5 +1,12 @@
 # hksc-disassembler Changelog
 
+## 0.2.2 (2024-08-01)
+### Improvements:
+- Constants, Instructions and Debug Info path will now only print if they exist.
+- Made changes to formatting to be more similar to a YAML-like syntax.
+# New Features:
+- Added support for BK math operations.
+
 ## 0.2.1 (2024-07-29)
 ### Fixes:
 - Incorrect reading on the SETTABLE instruction has been fixed.

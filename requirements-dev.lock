@@ -24,7 +24,7 @@ packaging==24.1
     # via pytest
 pluggy==1.5.0
     # via pytest
-pyright==1.1.373
+pyright==1.1.374
 pytest==8.3.2
 ruff==0.5.4
 typing-extensions==4.12.2
